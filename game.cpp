@@ -21,19 +21,84 @@ class playerStats{
     int attack1Damage = 25;
     int attack2boost;
     int attack3Damage = 75;
-    bool isAlive;
+    bool isAlive = true;
 
 };
 
+class villageMarketThief{
+    int currentHealth;
+    int maxHealth;
+    int attack1Damage;
+    int attack2Damage;
+    bool isAlive;
+    std::string catchphrase = "Give me that!";
+    std::string halfHealthCatchphrase = "I'm not sure this is worth it anymore!";
+    std::string deadCatchphrase = "Definitely wasn't worth it...";
+    std::string target = "Village Market Thief";
+};
+class lakeSeal{
+    int currentHealth;
+    int maxHealth;
+    int attack1Damage;
+    int attack2Damage;
+    bool isAlive;
+    std::string target = "Lake Seal";
+};
+class lakeSprite{
+    int currentHealth;
+    int maxHealth;
+    int attack1Damage;
+    int attack2Damage;
+    bool isAlive;
+    std::string catchphrase = "I like the shiny things!";
+    std::string halfHealthCatchphrase = "Shiny Shiny Shiny!";
+    std::string deadCatchphrase = "The... Shiny...";
+    std::string target = "Lake Sprite";
+};
+class lakeBandit{
+    public:
+    int currentHealth = 400;
+    int maxHealth = 400;
+    int attack1Damage = 40;
+    int attack2Damage = 50;
+    bool isAlive = true;
+    std::string catchphrase = "Give me all your loot!";
+    std::string halfHealthCatchphrase = "Give it before I gut you!";
+    std::string deadCatchphrase = "All I wanted was a little extra...";
+    std::string target = "Lake Bandit";
+};
+class forestDeer{
+    int currentHealth;
+    int maxHealth;
+    int attack1Damage;
+    int attack2Damage;
+    bool isAlive;
+    std::string target = "Forest Deer";
+};
+class forestElf{
+    int currentHealth;
+    int maxHealth;
+    int attack1Damage;
+    int attack2Damage;
+    bool isAlive;
+    std::string target = "Forest Elf";
+};
+class forestBear{
+    int currentHealth;
+    int maxHealth;
+    int attack1Damage;
+    int attack2Damage;
+    bool isAlive;
+    std::string target = "Forest Bear";
+};
 class thief{
     public:
     int currentHealth = 250;
     int maxHealth = 250;
     int damage = 25;
-    bool isAlive;
+    bool isAlive = true;
 };
 
-std::map<std::string,std::string> inGameItems; // need to edit and have it run first
 std::map<std::string,std::string> inventory; // will be able to be viewed throughout the game
 
 void characterDefine(player &main, playerStats &player); // allows us to create our main character
@@ -54,19 +119,29 @@ void village3ChoiceB();
 void village4ChoiceA(player &main, std::map<std::string,std::string> &inventory, playerStats &player, thief &robber);
 void village4ChoiceB();
 void village4A(std::map<std::string,std::string> &inventory);
-//void loadInGameItems(); // need to make a function that will load all in game items into the map, needs to run first
+
 void checkInventory(std::map<std::string,std::string> &inventory);
 void viewAttacks(player &main, playerStats &player);
-void chooseAttack(player &main, playerStats &player);
+void titleGenerator(player &main);
+
+//Combat Functions
 int thiefAttack(player &main, playerStats &player, thief robber);
 void fight1(player &main, playerStats &player, thief &robber);
 
+void combat(player &main, playerStats &player, lakeBandit enemy);
+
+void enemyAttack(player &main, playerStats &player, lakeBandit enemy);
+void lootChest(std::map<std::string,std::string> &inventory, playerStats player);
+void lootEnemy(std::map<std::string,std::string> &inventory, player &main, playerStats &player);
+// try to gigure out a way to make it so i can just plug random enemies into funcs, instead of specifuing (lakeseal)
+
 int main(){
-    std::string name;
     player p1;
     playerStats player1;
     thief robber;
+    lakeBandit bandit;
 
+do{
     /*authorsNote();
     intro();
     villageStoryText1();
@@ -75,6 +150,8 @@ int main(){
     classAttackAssignment(p1,player1);
     villageStoryText3(p1, inventory, player1);
     VillageStoryText4(p1, inventory, player1, robber);
+
+    combat(p1, player1, bandit);}while(player1.isAlive = true);
 
     return 0;
 }
@@ -342,9 +419,6 @@ void viewAttacks(player &main, playerStats &player){
         std::cout << std::endl;
     }
 }
-void chooseAttack(); //need to make
-//int attackCalculator(); //need to make
-//int enemyAttack();
 void village3ChoiceA(player &main, playerStats &player){
     std::cout << "'Aunt Lorna, do you want to talk about it?' I asked \n";
     std::cin.ignore();
@@ -431,7 +505,6 @@ void village4ChoiceA(player &main, std::map<std::string,std::string> &inventory,
     std::cout << "You see a thief repeatedly yanking on a woman's purse! Despite her floundering, she is able to hold on with one hand! \n";
     std::cin.ignore();
     std::cout << "You engage, the thief notices you, and your first test of combat begins... \n";
-    std::cin.ignore();
     fight1(main,player,robber);
 }
 void village4A(std::map<std::string,std::string> &inventory){
@@ -479,7 +552,6 @@ void fight1(player &main, playerStats &player, thief &robber){
                 thiefAttack(main, player, robber);
             }
             else if(choice == 'D' || choice == 'd'){
-                robber.currentHealth = robber.currentHealth - player.attack3Damage;
                 srand(time(NULL));
                 int hit = (rand() % 4) + 1;
 
@@ -489,6 +561,7 @@ void fight1(player &main, playerStats &player, thief &robber){
                 }
                 else{
                     std::cout << "You strike the thief for " << player.attack3Damage << " damage! \n";
+                    robber.currentHealth = robber.currentHealth - player.attack3Damage;
                     thiefAttack(main, player, robber);
                 }    
             }
@@ -507,6 +580,7 @@ void fight1(player &main, playerStats &player, thief &robber){
             else if(robber.currentHealth <= 0){
                 robber.isAlive = false;
                 village4A(inventory);
+                player.currentHealth = player.maxHealth;
             
             }
         }
@@ -548,7 +622,7 @@ void fight1(player &main, playerStats &player, thief &robber){
             else if(robber.currentHealth <= 0){
                 robber.isAlive = false;
                 village4A(inventory);
-            
+                player.currentHealth = player.maxHealth;
             }    
         }
 
@@ -583,10 +657,11 @@ int thiefAttack(player &main, playerStats &player, thief robber){
     else{
         std::cout << "It was a critical hit! \n";
     }
+    robber.damage = 25;
     std::cout << std::endl;
     return 0;
 }
-void VillageStoryText5(){
+void VillageStoryText5(player &main){
     std::cin.ignore();
     std::cout << "I finally made my way towards Alina and her family's house. I can't stop staring at this potion in my bag. \n";
     std::cin.ignore();
@@ -594,4 +669,667 @@ void VillageStoryText5(){
     std::cin.ignore();
     std::cout << "As I get closer, I see the ground littered in lit candles, paintings thrown aside, and hear the faint whispers of deep praying. \n";
     std::cin.ignore();
+    std::cout << "Alina's eyes dart towards me, meeting my rotating gaze. '" << main.name << "!', she yelled. \n";
+    std::cin.ignore();
+    std::cout << ""; // editttt
+}
+void combat(player &main, playerStats& player, lakeBandit enemy){
+    player.currentHealth = player.maxHealth;
+    std::cout << enemy.catchphrase << std::endl;;
+
+    while(player.isAlive && enemy.isAlive){
+        char choice;
+
+        if(player.playerClass == "Mage" || player.playerClass == "Warrior" || player.playerClass == "Rogue"){
+            std::cout << "Your Health: " << player.currentHealth << std::endl;
+            std::cout << enemy.target << " Health: " << enemy.currentHealth << std::endl;
+            std::cout << "What would you like to do? \n";
+            viewAttacks(main, player);
+            std::cin >> choice;
+
+            if(choice == 'A' || choice == 'a'){
+                enemy.currentHealth = enemy.currentHealth - player.attack1Damage;
+                std::cout << "You strike the thief for " << player.attack1Damage << " damage! \n";
+                enemyAttack(main, player, enemy);
+            }
+            else if(choice == 'B' || choice == 'b'){
+                player.attack1Damage = player.attack1Damage * 1.25;
+                player.attack3Damage = player.attack3Damage * 1.25;
+                std::cout << "Damage Abilities Increased! \n";
+                enemyAttack(main, player, enemy);
+            }
+            else if(choice == 'D' || choice == 'd'){
+                srand(time(NULL));
+                int hit = (rand() % 4) + 1;
+
+                if(hit == 1 || hit == 2){
+                    std::cout << "Your special attack missed! \n";
+                    enemyAttack(main, player, enemy);
+                }
+                else{
+                    std::cout << "You strike the thief for " << player.attack3Damage << " damage! \n";
+                    enemy.currentHealth = enemy.currentHealth - player.attack3Damage;
+                    enemyAttack(main, player, enemy);
+                }    
+            }
+            else if(choice == 'C' || choice == 'c'){
+                std::cout << "You do not feel any attack damage from the " <<enemy.target << "! \n";
+
+            }
+
+            if(player.currentHealth <=0){
+                player.isAlive = false;
+                std::cout << "You have died an admirable death... Sorry to see you go so soon!\n";
+                std::cin.ignore();
+                std::cout << "But not to worry, " << main.name << ", you can try again at any time. \n";
+                std::cout << "Thank you for playing!";
+            }
+            else if(enemy.currentHealth <= 0){
+                enemy.isAlive = false;
+                std::cout << "You have defeated the " << enemy.target << "! \n";
+                std::cout << "Let's see what they had on them \n";
+                lootEnemy(inventory, main, player);
+                player.currentHealth = player.maxHealth;
+            
+            }
+        }
+        else if(player.playerClass == "Cleric"){
+            std::cout << "Your Health: " << player.currentHealth << std::endl;
+            std::cout << enemy.target << " Health: " << enemy.currentHealth << std::endl;
+            std::cout << "What would you like to do? \n";
+            viewAttacks(main, player);
+            std::cin >> choice;
+
+            if(choice == 'A' || choice == 'a'){
+                enemy.currentHealth = enemy.currentHealth - player.attack1Damage;
+                std::cout << "You strike the " << enemy.target << " for " << player.attack1Damage << " damage! \n";
+                enemyAttack(main, player, enemy);
+            }
+            else if(choice == 'B' || choice == 'b'){
+                player.attack1Damage = player.attack1Damage * 1.25;
+                player.attack3Damage = player.attack3Damage * 1.25;
+                std::cout << "Damage Abilities Increased! \n";
+                enemyAttack(main, player, enemy);
+            }
+            else if(choice == 'D' || choice == 'd'){
+                player.currentHealth = player.currentHealth + (player.currentHealth * 0.2);
+                std::cout << "You have healed yourself! \n";  
+            }
+            else if(choice == 'C' || choice == 'c'){
+                enemy.attack1Damage = enemy.attack1Damage * 0.80;
+                enemy.attack2Damage = enemy.attack2Damage * 0.80;
+                std::cout << "The " << enemy.target << "'s attack power has been reduced! \n";
+                enemyAttack(main, player, enemy);
+            }
+
+            if(player.currentHealth <=0){
+                player.isAlive = false;
+                std::cout << "You have died an admirable death... Sorry to see you go so soon!\n";
+                std::cin.ignore();
+                std::cout << "But not to worry, " << main.name << ", you can try again at any time. \n";
+                std::cout << "Thank you for playing!";
+            }
+            else if(enemy.currentHealth <= 0){
+                enemy.isAlive = false;
+                std::cout << "You have defeated the " << enemy.target << "! \n";
+                std::cout << "Let's see what they had on them \n";
+                lootEnemy(inventory, main, player);
+                player.currentHealth = player.maxHealth;
+            
+            }    
+        }
+
+    }
+}
+void titleGenerator(player &main){
+    srand(time(NULL));
+
+    int title = (rand() % 25) + 1;
+    char choice;
+
+    switch(title){
+        case 1:
+            std::cout << "You have found the title card: , God Walking Among Mere Mortals \n";
+            std::cin.ignore();
+            std::cout << "Would you like to use this title instead of your previous choice? \n";
+            std::cin.ignore();
+            std::cout << "If yes, enter 'A' after this message: \n";
+            std::cin >> choice;
+
+            if(choice == 'A' || choice == 'a'){
+                main.title = ", God Walking Among Mere Mortals";
+            }
+            break;
+        case 2:
+            std::cout << "You have found the title card: , The Mentally Challenged \n";
+            std::cin.ignore();
+            std::cout << "Would you like to use this title instead of your previous choice? \n";
+            std::cin.ignore();
+            std::cout << "If yes, enter 'A' after this message: \n";
+            std::cin >> choice;
+
+            if(choice == 'A' || choice == 'a'){
+                main.title = ", The Mentally Challenged";
+            }
+            break;    
+        case 3:
+        std::cout << "You have found the title card: , The Master Baiter \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Master Baiter";
+        }
+        break;
+        case 4:
+        std::cout << "You have found the title card: , The Master Baiter \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Master Baiter";
+        }
+        break;
+        case 5:
+        std::cout << "You have found the title card: , The Silver Knight \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Silver Knight";
+        }
+        break;
+        case 6:
+        std::cout << "You have found the title card: , The Insane \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Insane";
+        }
+        break;
+        case 7:
+        std::cout << "You have found the title card: , The Highlord \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Highlord";
+        }
+        break;
+        case 8:
+        std::cout << "You have found the title card: , Destroyer of Dreams \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Destroyer of Dreams";
+        }
+        break;
+        case 9:
+        std::cout << "You have found the title card: , The Scott Malkinson of the Group \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Scott Malkinson of the Group";
+        }
+        break;
+        case 10:
+        std::cout << "You have found the title card: , The Heart of the Party \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Heart of the Party";
+        }
+        break;
+        case 11:
+        std::cout << "You have found the title card: , The Heart of the Party \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Heart of the Party";
+        }
+        break;
+        case 12:
+        std::cout << "You have found the title card: , Searching for Love \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Searching for Love";
+        }
+        break;
+        case 13:
+        std::cout << "You have found the title card: , Definitely Single \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Definitely Single";
+        }
+        break;
+        case 14:
+        std::cout << "You have found the title card: , Pale like the Moon \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Pale like the Moon";
+        }
+        break;
+        case 15:
+        std::cout << "You have found the title card: , The Heart of the Party \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+         
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Heart of the Party";
+        }
+        break;
+        case 16:
+        std::cout << "You have found the title card: , Soot-Stained \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Soot-Stained";
+        }
+        break;
+        case 17:
+        std::cout << "You have found the title card: , The Pathological Liar \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Pathological Liar";
+        }
+        break;
+        case 18: 
+        std::cout << "You have found the title card: , Hard Pill to Swallow \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Hard Pill to Swallow";
+        }
+        break;
+        case 19:
+        std::cout << "You have found the title card: , The Forgotten \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Forgotten";
+        }
+        break;
+        case 20:
+        std::cout << "You have found the title card: , The Mindless \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Mindless";
+        }
+        break;
+        case 21:
+        std::cout << "You have found the title card: , The Mindbreaker \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Mindbreaker";
+        }
+        break;
+        case 22:
+        std::cout << "You have found the title card: , The Stubborn \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Stubborn";
+        }
+        break;
+        case 23:
+        std::cout << "You have found the title card: , Ridiculous When Acting Serious \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+        
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Ridiculous When Acting Serious";
+        }
+        break;
+        case 24:
+        std::cout << "You have found the title card: , Crazy in Love \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", Crazy in Love";
+        }
+        break;
+        case 25:
+        std::cout << "You have found the title card: , The Game Finisher \n";
+        std::cin.ignore();
+        std::cout << "Would you like to use this title instead of your previous choice? \n";
+        std::cin.ignore();
+        std::cout << "If yes, enter 'A' after this message: \n";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            main.title = ", The Game Finisher";
+        }
+        break;
+    }
+
+
+}
+void enemyAttack(player &main, playerStats &player, lakeBandit enemy){
+    srand(time(NULL));
+    int booster = (rand() % 10) +1 ; // damage booster;
+    int choice = (rand() % 2) +1 ; // choose attack;
+
+    switch(choice){
+        case 1:
+
+        if(booster >= 0 && booster <=3){
+            enemy.attack1Damage = enemy.attack1Damage * .75;
+            player.currentHealth = player.currentHealth - enemy.attack1Damage;
+        }
+        else if(booster > 3 && booster <= 7){
+            enemy.attack1Damage = enemy.attack1Damage;
+            player.currentHealth = player.currentHealth - enemy.attack1Damage;
+        }
+        else{
+            enemy.attack1Damage = enemy.attack1Damage * 1.3;
+            player.currentHealth = player.currentHealth - enemy.attack1Damage;
+        }
+
+        std::cout << "The " << enemy.target << " attacked you for " << enemy.attack1Damage << " damage!\n";
+    
+        if(booster >= 0 && booster <=3){
+            std::cout << "It did less damage than normal. \n";
+        }
+        else if(booster > 3 && booster <= 7){
+            std::cout << "It did a normal amount of damage. \n";
+        }
+        else{
+            std::cout << "It was a critical hit! \n";
+        }
+        std::cout << std::endl;
+            break;
+
+        case 2:
+        if(booster >= 0 && booster <=3){
+            enemy.attack1Damage = enemy.attack2Damage * .75;
+            player.currentHealth = player.currentHealth - enemy.attack2Damage;
+        }
+        else if(booster > 3 && booster <= 7){
+            enemy.attack2Damage = enemy.attack2Damage;
+            player.currentHealth = player.currentHealth - enemy.attack2Damage;
+        }
+        else{
+            enemy.attack2Damage = enemy.attack2Damage * 1.3;
+            player.currentHealth = player.currentHealth - enemy.attack2Damage;
+        }
+
+        std::cout << "The " << enemy.target << " attacked you for " << enemy.attack2Damage << " damage!\n";
+    
+        if(booster >= 0 && booster <=3){
+            std::cout << "It did less damage than normal. \n";
+        }
+        else if(booster > 3 && booster <= 7){
+            std::cout << "It did a normal amount of damage. \n";
+        }
+        else{
+            std::cout << "It was a critical hit! \n";
+        }
+        std::cout << std::endl;
+            break;
+    }
+}
+void lootChest(std::map<std::string,std::string> &inventory, playerStats &player){
+    
+    srand(time(NULL));
+    int loot = (rand() % 5) + 1;
+
+    switch(loot){
+        case 1:
+            std::cout << "You break open the chest with your weapon. \n";
+            std::cin.ignore();
+            std::cout << "You have found a health potion! \n";
+            std::cin.ignore();
+            std::cout << "It has been added to your inventory!\n";
+
+            inventory.insert(std::pair<std::string, std::string> ("Health Potion", "Use this to restore 20% of your health."));
+            std::cin.ignore();
+            break;
+        
+        case 2:
+            std::cout << "You break open the chest with your weapon. \n";
+            std::cin.ignore();
+            std::cout << "You have found a sweet-looking chapeau! \n";
+            std::cin.ignore();
+            std::cout << "You don the new apparel. \n";
+            std::cin.ignore();
+            break;
+
+        case 3:
+            std::cout << "You break open the chest with your weapon. \n";
+            std::cin.ignore();
+            std::cout << "You have found a health potion! \n";
+            std::cin.ignore();
+            std::cout << "It has been added to your inventory!\n";
+            std::cin.ignore();
+
+            inventory.insert(std::pair<std::string, std::string> ("Health Potion", "Use this to restore 20% of your health."));
+            std::cin.ignore();
+            break;
+
+        case 4:
+            std::cout << "You break open the chest with your weapon. \n";
+            std::cin.ignore();
+            std::cout << "You have found an epic weapon! This is the thing of legends! \n";
+            std::cin.ignore();
+            std::cout << "You feel stronger just holding it. Goodbye ol' reliable! \n";
+            player.attack1Damage = player.attack1Damage + 10;
+            player.attack3Damage = player.attack3Damage + 20;
+            std::cin.ignore();
+            break;
+        
+        case 5:
+            std::cout << "You break open the chest with your weapon. \n";
+            std::cin.ignore();
+            std::cout << "You can't believe your eyes! A glowing phial of shimmering liquid! \n";
+            std::cin.ignore();
+            std::cout << "You drink the phial, hoping for the best. \n";
+            std::cin.ignore();
+
+            srand(time(NULL));
+
+            int survive = (rand() % 2) + 1;
+
+            if(survive = 1){
+                std::cout << "You have drank water from the Fountain of the Gods! You feel much stronger now! \n";
+                std::cin.ignore();
+                player.maxHealth = player.maxHealth + (player.maxHealth * .20);
+                player.currentHealth = player.maxHealth;
+                player.attack1Damage = player.attack1Damage + 20;
+                player.attack3Damage = player.attack3Damage + 40;
+                std::cout << "Player Strength Incrased. \n";
+                std::cin.ignore();
+            }
+
+            else{
+                std::cout << " Oh no! This was an expired poison potion from long ago! \n";
+                std::cin.ignore();
+                std::cout << "You don't feel so well. You start to develop a hatred to treasure... \n";
+                std::cin.ignore();
+                std::cout << "Player Strength weakened. \n";
+                std::cin.ignore();
+
+                player.maxHealth = player.maxHealth - (player.maxHealth * .20);
+                player.currentHealth = player.maxHealth;
+                player.attack1Damage = player.attack1Damage - 10;
+                player.attack3Damage = player.attack3Damage - 20;
+            }
+    }
+
+    
+}
+void lootEnemy(std::map<std::string,std::string> &inventory, player &main, playerStats &player){    
+    std::cout << "You walk up to your recently slain enemy. \n";
+    std::cin.ignore();
+
+    srand(time(NULL));
+
+    int loot = (rand() % 100) + 1;
+
+    if(loot >= 1 && loot <= 33){
+        std::cout << "You search the body and find nothing of use.\n";
+        std::cin.ignore();
+        std::cout << "You feel weird doing this now... \n";
+        std::cin.ignore();
+    }
+
+    else if(loot > 33 && loot <= 66){
+        std::cout << "You find a title card. These can be used to change your title. \n";
+        titleGenerator(main);
+        std::cin.ignore();
+    }
+
+    else if(loot > 66 && loot <= 99){
+        std::cout << "You have found a health potion! \n";
+        std::cin.ignore();
+        std::cout << "It has been added to your inventory!\n";
+
+        inventory.insert(std::pair<std::string, std::string> ("Health Potion", "Use this to restore 20% of your health."));
+        std::cin.ignore();
+    }
+
+    else{
+        std::cout << "You have found a Phial of Special Strength: Increase your stats by 5%! \n";
+        player.attack1Damage = player.attack1Damage + (player.attack1Damage * .05);
+        player.attack3Damage = player.attack3Damage + (player.attack3Damage * .05);
+        player.maxHealth = player.maxHealth + (player.maxHealth * .05);
+        player.currentHealth = player.maxHealth;
+        std::cin.ignore();
+    }
+}
+void randomDeath(playerStats &player){
+    srand(time(NULL));
+
+    int death1 = (rand() % 1000) + 1;
+    int death2 = (rand() % 100) + 1;
+    int death3 = (rand() % 10000) + 1;
+    int death4 = (rand() % 100000) + 1;
+    int death5 = (rand() % 1000000) + 1;
+    char choice;
+
+    if(death1 = 652){
+        std::cout << "You have slipped and fallen, landing right on your medulla. You will not recover. \n";
+        std::cin.ignore();
+        std::cout << "The adventure is over... Please try again. \n";
+        player.isAlive = false;
+    }
+
+    if(death2 = 71){
+        std::cout << "You reach for a stray branch while walking and notice some interesting looking berries. \n";
+        std::cin.ignore();
+        std::cout << "Do you eat them? (A) for yes, (B) for no.";
+        std::cin >> choice;
+
+        if(choice == 'A' || choice == 'a'){
+            std::cout << "You ingest a mouthful of the berries all at once.\n";
+            std::cin.ignore();
+            std::cout << "You were hungrier than you thought! \n";
+            std::cin.ignore();
+            std::cout << "It didn't take long to realize the berries are poisonous. \n";
+            std::cin.ignore();
+            std::cout << "Your throat and eyelids start to swell. This isn't good \n";
+            std::cin.ignore();
+            std::cout << "Your vision is fading... You will not recover. \n";
+            std::cin.ignore();
+            std::cout << "The adventure is over... Please try again. \n";
+            player.isAlive = false;
+        }
+        else if(choice == 'B' || choice == 'b'){
+            std::cout << "You decide to not ingest the berries. \n";
+            std::cin.ignore();
+            std::cout << "They didn't look interesting in a good way, after all. \n";
+            std::cin.ignore();
+        }
+    // finish these random deaths
+
+
+        player.isAlive = false;
+    }
 }
